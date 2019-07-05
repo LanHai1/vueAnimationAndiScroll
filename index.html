@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+      ul {
+        padding: 0;
+        margin: 0;
+      }
+      ul > li {
+        cursor: default;
+      }
+      input{
+          float: right;
+      }
+      [v-cloak] {
+        opacity: 0;
+      }
+      .con {
+        width: 200px;
+        height: 200px;
+        border: 1px solid #000000;
+      }
+
+      .list-item {
+        display: inline-block;
+        margin-right: 10px;
+      }
+      .list-enter-active,
+      .list-leave-active {
+        transition: all 0.6s;
+      }
+      .list-enter, .list-leave-to
+/* .list-leave-active for below version 2.1.8 */ {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app" v-cloak>
+      <input type="button" value="添加" @click="add" />
+      <input type="button" value="删除" @click="remove" />
+      <h1>双击li删除！</h1>
+      <h1>滚动li吧！</h1>
+      <br />
+      <div ref="con" class="con">
+        <transition-group name="list" tag="ul">
+          <!-- 注意 想要删除的时候动画实现在当前删除的元素上 需要给key唯一值 不能是index -->
+          <li
+            v-for="(item, index) in list"
+            :key="item"
+            @dblclick="indexDelete(index)"
+            @mouseenter="thisAddColor($event)"
+            @mouseleave="thisRemove($event)"
+          >
+            {{ item }}
+          </li>
+        </transition-group>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="./lib/iscroll.js"></script>
+    <script>
+      const vm = new Vue({
+        el: "#app",
+        data: {
+          list: [
+            "我是第1个li",
+            "我是第2个li",
+            "我是第3个li",
+            "我是第4个li",
+            "我是第5个li",
+            "我是第6个li",
+            "我是第7个li",
+            "我是第8个li",
+            "我是第9个li",
+            "我是第10个li",
+            "我是第11个li",
+            "我是第12个li",
+            "我是第13个li",
+            "我是第14个li",
+            "我是第15个li",
+            "我是第16个li",
+            "我是第17个li",
+            "我是第18个li",
+            "我是第19个li",
+            "我是第20个li"
+          ],
+          count: 20,
+          listSrcoll: undefined
+        },
+        methods: {
+          add() {
+            // item唯一 上面绑定了key
+            this.count += 1;
+            this.list.push(`我是第${this.count}个li`);
+          },
+          remove() {
+            this.list.splice(this.list.length - 1, 1);
+          },
+          indexDelete(index) {
+            this.list.splice(index, 1);
+          },
+          // 鼠标移入高亮
+          thisAddColor(el) {
+            el.path[0].style.backgroundColor = "#f00";
+          },
+          // 鼠标移除还原
+          thisRemove(el) {
+            el.path[0].style.backgroundColor = "transparent";
+          }
+        },
+        mounted() {
+          // 绑定iScroll
+          this.listSrcoll = new IScroll(this.$refs.con, {
+            mouseWheel: true // 开启鼠标滚轮支持
+          });
+        },
+        updated() {
+          // 刷新iScroll
+          this.listSrcoll.refresh();
+        }
+      });
+    </script>
+  </body>
+</html>
